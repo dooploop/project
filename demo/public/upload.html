@@ -1,0 +1,138 @@
+<!-- public/upload.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload Example</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="greeting">
+        <h3 id="greetingMessage">Привет!</h3>
+    </div>
+
+    <div class="input-container">
+        <label for="fileInput" class="custom-file-label">Выбрать файл</label>
+        <input type="file" id="fileInput" class="custom-file-input" />
+    </div>
+
+    <button onclick="uploadFile()" class="custom-upload-button">Отправить</button>
+    <div id="result"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const name = urlParams.get('name');
+
+            if (name) {
+                document.getElementById('greetingMessage').innerText = `Привет, ${name}! загрузите документ`;
+            }
+        });
+
+        async function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (file) {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ file: { name: file.name, data: await readFile(file) } }),
+                });
+
+                const result = await response.json();
+
+                if (result.path) {
+                    document.getElementById('result').innerHTML = `<p>Ура!!!</p>`;
+                } else {
+                    document.getElementById('result').innerHTML = `<p>Error: ${result.error}</p>`;
+                }
+            } else {
+                alert('Please select a file');
+            }
+        }
+
+        function readFile(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+
+                reader.onload = (event) => {
+                    resolve(event.target.result.split(',')[1]);
+                };
+
+                reader.onerror = (error) => {
+                    reject(error);
+                };
+
+                reader.readAsDataURL(file);
+            });
+        }
+    </script>
+</body>
+</html>
+
+<style>
+    /* public/styles.css */
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+#result {
+    margin-top: 20px;
+}
+
+/* Custom style for the file input */
+.input-container {
+    display: flex;
+    align-items: center;
+}
+
+.custom-file-input {
+    display: none;
+}
+
+.custom-file-label {
+    background-color: #999d99;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+.custom-file-label:hover {
+    background-color: #c5d8f4;
+}
+
+/* Custom style for the upload button */
+.custom-upload-button {
+    background-color: #2196f3;
+    color: #fff;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.custom-upload-button:hover {
+    background-color: #0b7dda;
+}
+.greeting{
+    margin: 20px;
+}
+
+</style>

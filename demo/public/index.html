@@ -1,0 +1,113 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Page</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="container">
+        <form id="dataForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="phoneNumber">Phone Number:</label>
+            <input type="text" id="phoneNumber" name="phoneNumber" required>
+
+            <button type="button" onclick="submitForm()">Submit</button>
+
+            <div id="error-message"></div>
+        </form>
+    </div>
+
+    <div id="result"></div>
+
+    <script>
+        async function submitForm() {
+            const name = document.getElementById('name').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
+
+            if (!name || !phoneNumber) {
+                document.getElementById('error-message').innerText = 'Please fill in all fields.';
+                return;
+            }
+
+            const response = await fetch('/generateLink', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, phoneNumber }),
+            });
+
+            const result = await response.json();
+
+            if (result.link) {
+                const linkContainer = document.getElementById('result');
+                linkContainer.innerHTML = `<p>Link generated successfully. Link: <a href="${result.link}">${result.link}</a></p>`;
+                document.getElementById('error-message').innerText = ''; // Clear error message
+            } else {
+                document.getElementById('result').innerHTML = '';
+                document.getElementById('error-message').innerText = `Error: ${result.error}`;
+            }
+        }
+    </script>
+</body>
+</html>
+<style>
+/* public/styles.css */
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #4caf50;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+#error-message {
+    color: #ff0000;
+    margin-bottom: 16px;
+}
+
+
+</style>
