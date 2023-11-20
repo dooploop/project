@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>File Upload Example</title>
-    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
     <div class="greeting">
@@ -35,7 +34,7 @@
             const file = fileInput.files[0];
 
             if (file) {
-                const response = await fetch('/upload', {
+                const response = await fetch('/uploadfile', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

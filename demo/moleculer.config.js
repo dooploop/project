@@ -59,10 +59,19 @@ module.exports = {
 		  name: 'file',
 		  path: './services/file.service',
 		},
+		{
+			name: 'link',
+			path: './services/link.service',
+		  },
 		
 		  {
 			name: 'db',
 			path: './services/db.service',
+		  },
+		  
+		  {
+			name: 'sms',
+			path: './services/sms.service',
 		  },
 	],
 	// Default log level for built-in console logger. It can be overwritten in logger options above.

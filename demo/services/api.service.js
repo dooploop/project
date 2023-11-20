@@ -51,7 +51,8 @@ module.exports = {
 
 				aliases: {
 					'POST /generateLink': 'link.generateLink',
-					'GET /upload':'file.upload'
+					'GET /upload':'file.showUploadPage',
+					'POST /uploadfile': 'file.upload'
 				},
 				
 
