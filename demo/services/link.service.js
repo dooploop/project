@@ -20,20 +20,27 @@ const vonage = new Vonage({
 module.exports = {
   name: "link",
   actions: {
-
-  
-    async generateLink(ctx) {
+    generateLink: {
+      rest: {
+        method: "POST",
+        path: "/generate-link",
+      },
+      params: {
+        name: "string",
+        phoneNumber: "string",
+      },
+    async handler(ctx) {
       try {
         if (!ctx.params.name || !ctx.params.phoneNumber) {
           throw new Error("Name or Phone Number parameters are missing");
         }
 
-        const link = `http://localhost:3000/upload?name=${ctx.params.name}&phoneNumber=${ctx.params.phoneNumber}`;
+        const link = `http://localhost:3000/api/upload?name=${ctx.params.name}&phoneNumber=${ctx.params.phoneNumber}`;
 
-        const result = await pool.query(
-          'INSERT INTO users (username, phonenumber) VALUES ($1, $2) RETURNING *',
-          [ctx.params.name, ctx.params.phoneNumber]
-        );
+      //  const result = await pool.query(
+          //'INSERT INTO users (username, phonenumber) VALUES ($1, $2) RETURNING *',
+          //[ctx.params.name, ctx.params.phoneNumber]
+        //);
 
        // await ctx.call('sms.sendSMS', { to: ctx.params.phoneNumber, text: `Your link is ${link}` });
 
@@ -44,4 +51,5 @@ module.exports = {
       }
     },
   },
+},
 };

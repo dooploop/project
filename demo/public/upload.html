@@ -12,13 +12,13 @@
     </div>
 
     <div class="input-container">
-        
         <label for="fileInput" class="custom-file-label">Выбрать файл</label>
-        <input type="file" id="fileInput" class="custom-file-input" />
+        <input type="file" id="fileInput" class="custom-file-input" accept=".pdf, .doc, .docx"/>
     </div>
-
+    
     <button onclick="uploadFile()" class="custom-upload-button">Отправить</button>
-    <div id="result"></div>
+    <div id="result"> </div>
+    
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -35,7 +35,7 @@
             const file = fileInput.files[0];
 
             if (file) {
-                const response = await fetch('/uploadfile', {
+                const response = await fetch('/api/uploadfile', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -90,6 +90,8 @@ body {
 
 #result {
     margin-top: 20px;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Custom style for the file input */

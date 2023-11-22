@@ -4,9 +4,15 @@ const path = require("path");
 
 module.exports = {
   name: "file",
+
   actions: {
-    
-    async showUploadPage(ctx) {
+    showUploadPage: {
+      rest: {
+        method: "GET",
+        path: "/api/generate-link",
+      },
+
+    async handler(ctx) {
         // Логика отображения страницы загрузки
         const uploadPagePath = path.join(__dirname, "..", "public", "upload.html");
   
@@ -28,7 +34,14 @@ module.exports = {
           return "Internal Server Error";
         }
       },
-    async upload(ctx) {
+    },
+
+    upload: {
+      rest: {
+        method: "POST",
+        path: "/api/upload",
+      },
+    async handler(ctx) {
       try {
         if (!ctx.params.file) {
           throw new Error("File parameter is missing");
@@ -48,4 +61,5 @@ module.exports = {
       }
     },
   },
+},
 };

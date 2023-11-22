@@ -11,7 +11,7 @@ const ApiGateway = require("moleculer-web");
  */
 
 module.exports = {
-	name: "api",
+	name: "/api",
 	mixins: [ApiGateway],
 
 	/** @type {ApiSettingsSchema} More info about settings: https://moleculer.services/docs/0.14/moleculer-web.html */
@@ -27,14 +27,14 @@ module.exports = {
 
 		routes: [
 			{
-				path: "",
+				path: "/api",
 
 				whitelist: [
 					"**"
 				],
 
 				// Route-level Express middlewares. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Middlewares
-				use: [],
+				use: [ApiGateway.serveStatic("public")],
 
 				// Enable/disable parameter merging method. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Disable-merging
 				mergeParams: true,
@@ -53,6 +53,7 @@ module.exports = {
 					'POST /generateLink': 'link.generateLink',
 					'GET /upload':'file.showUploadPage',
 					'POST /uploadfile': 'file.upload'
+				
 				},
 				
 
