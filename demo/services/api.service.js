@@ -40,7 +40,7 @@ module.exports = {
 				mergeParams: true,
 
 				// Enable authentication. Implement the logic into `authenticate` method. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Authentication
-				authentication: false,
+				authentication: true,
 
 				// Enable authorization. Implement the logic into `authorize` method. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Authorization
 				authorization: false,
@@ -52,7 +52,9 @@ module.exports = {
 				aliases: {
 					'POST /generateLink': 'link.generateLink',
 					'GET /upload':'file.showUploadPage',
-					'POST /uploadfile': 'file.upload'
+					'POST /uploadfile': 'file.upload',
+					'POST /login': 'auth.login',
+     				'GET /check-auth': 'auth.checkAuth',
 				
 				},
 				

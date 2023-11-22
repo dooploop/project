@@ -25,6 +25,10 @@
     <div id="result"></div>
 
     <script>
+          if (!localStorage.getItem('token')) {
+    // Пользователь не авторизован, перенаправление на страницу входа
+    window.location.href = '/login.html';
+  }
         async function submitForm() {
             const name = document.getElementById('name').value;
             const phoneNumber = document.getElementById('phoneNumber').value;
