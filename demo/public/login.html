@@ -1,57 +1,85 @@
-<!-- login.html -->
-
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Page Title</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 </head>
 <body>
-  <h1>Login Page</h1>
-  <form id="loginForm">
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="username" required><br>
 
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required><br>
+<div id="app" class="container mt-10">
+    <h4 id=" #welcome-heading">Добро пожаловать</h4>
+    <div id="auth-status"></div>
+    <form id="login-form" style="max-width: 300px; margin: auto;">
+        <div class="form-group">
+            <label for="username">Имя пользователя:</label>
+            <input type="text" class="form-control" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Пароль:</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="login()">Войти</button>
+    </form>
+</div>
 
-    <button type="button" onclick="login()">Login</button>
-  </form>
+    <script>
+        const accessToken = localStorage.getItem("accessToken");
 
-  <script>
-    async function login() {
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-
-      try {
-        
-        const response = await fetch('/api/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ username, password }),
-        });
-
-        const data = await response.json();
-
-        
-        if (response.ok) {
-          alert('Login successful!');
-          
-          // Сохранение токена в cookie
-          document.cookie = `token=${data.token}; expires=${new Date(Date.now() + 3600000).toUTCString()}; path=/`;
-
-          // Перенаправление на страницу "/callcenter"
-          window.location.href = '/callcenter';
-        } else {
-          alert('Login failed. Please check your credentials.');
+        function updateAuthStatus() {
+            if (accessToken) {
+                document.getElementById("auth-status").innerText = "Authenticated";
+            } else {
+                document.getElementById("auth-status").innerText = "Not Authenticated";
+            }
         }
-      } catch (error) {
-        console.error('Error during login:', error);
-      }
-    }
-  </script>
+        updateAuthStatus();
+        function login() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Store the access token in local storage
+                localStorage.setItem("accessToken", data.accessToken);
+                console.log(data.accessToken)
+                updateAuthStatus();
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+
+
+        
+    </script>
+
 </body>
 </html>
+
+
+<style>
+  /* Add your custom styles here if needed */
+  #app {
+            background-color: #ffffff; /* Set a background color for the content area */
+            padding: 20px; /* Add padding to the content area */
+            border-radius: 10px; /* Add rounded corners to the content area */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
+            margin-top: 50px; /* Add some top margin for spacing */
+        }
+
+        #welcome-heading {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #007bff; /* Set text color */
+        }
+</style>

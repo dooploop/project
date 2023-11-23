@@ -54,7 +54,8 @@ module.exports = {
 					'GET /upload':'file.showUploadPage',
 					'POST /uploadfile': 'file.upload',
 					'POST /login': 'auth.login',
-     				'GET /check-auth': 'auth.checkAuth',
+					'POST /logout': 'auth.logout',
+         		
 				
 				},
 				

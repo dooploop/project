@@ -1,64 +1,54 @@
 // auth.service.js
-const { Service } = require("moleculer");
-const bcrypt = require('bcrypt');
+
+const { ServiceBroker } = require("moleculer");
 const jwt = require('jsonwebtoken');
-const session = require('express-session');
+
+const broker = new ServiceBroker();
 
 module.exports = {
-  name: 'auth',
+    name: "auth",
 
-  settings: {
-    session: {
-      secret: 'woneit123',
-      resave: false,
-      saveUninitialized: true,
-      cookie: { secure: false },
+    settings: {
+        jwtSecret: "woneit", 
+        jwtExpiresIn: "1m", 
     },
-  },
 
-  actions: {
+    actions: {
+        login: {
+            params: {
+                username: "string",
+                password: "string",
+            },
+            async handler(ctx) {
+                const { username, password } = ctx.params;
 
-    login: {
-          rest: {
-            method: "POST",
-            path: "/login",
-          },
-    async handler(ctx) {
-      const { username, password } = ctx.params;
+       
+                const user = { username, password };
 
-      // логика проверки пользователя в базе данных
+            
+                const accessToken = this.generateAccessToken(user);
+
+                return { accessToken };
+            },
+        },
+        logout: {
+            params: {
+                token: "string",
+            },
+            handler(ctx) {
+                const { token } = ctx.params;
+                return { success: true, message: "Logout successful" };
+            },
+        },
     
-      if (username === 'user' && password === 'password') {
-      
-        const token = this.generateToken(username);
-
-  
-      //  ctx.session.isAuthenticated = true; -тут проблема
-       // ctx.session.token = token; и тут
-
-        return { token };
-      } else {
-     
-        throw new Error('Invalid username or password');
-      }
     },
-    },
+    
 
-    async checkAuth(ctx) {
-      if (ctx.session.isAuthenticated) {
-        return { status: 'authenticated' };
-      } else {
-        return { status: 'not authenticated' };
-      }
+    methods: {
+        generateAccessToken(user) {
+            return jwt.sign(user, this.settings.jwtSecret, { expiresIn: this.settings.jwtExpiresIn });
+        },
     },
-  },
-
-  methods: {
-    generateToken(username) {
-      
-      const payload = { sub: username };
-      return jwt.sign(payload, 'your-secret-key', { expiresIn: '1h' });
-    },
-  },
-
 };
+
+broker.start();
