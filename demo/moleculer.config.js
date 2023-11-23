@@ -66,6 +66,15 @@ module.exports = {
 	middlewares: [
 		
 	  ],
+	  settings: {
+		postgres: {
+		  user: "portgres",
+		  password: "aa346134aa",
+		  host: "localhost:3000",
+		  database: "practie",
+		  port: 5432,
+		},
+	  },
 	
 	  // ... (другие настройки)
 	// Default log level for built-in console logger. It can be overwritten in logger options above.

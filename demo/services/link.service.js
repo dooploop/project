@@ -35,12 +35,13 @@ module.exports = {
           throw new Error("Name or Phone Number parameters are missing");
         }
 
+
         const link = `http://localhost:3000/api/upload?name=${ctx.params.name}&phoneNumber=${ctx.params.phoneNumber}`;
 
-      //  const result = await pool.query(
-          //'INSERT INTO users (username, phonenumber) VALUES ($1, $2) RETURNING *',
-          //[ctx.params.name, ctx.params.phoneNumber]
-        //);
+        const result = await pool.query(
+          'INSERT INTO users (username, phonenumber) VALUES ($1, $2) RETURNING *',
+          [ctx.params.name, ctx.params.phoneNumber]
+        );
 
        // await ctx.call('sms.sendSMS', { to: ctx.params.phoneNumber, text: `Your link is ${link}` });
 

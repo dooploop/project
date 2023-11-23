@@ -1,4 +1,4 @@
-<!-- index.html -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,7 +10,9 @@
 <body>
 
 <div id="app" class="container mt-10">
-    <h4 id=" #welcome-heading">Добро пожаловать</h4>
+    <h4 id="welcome-heading">Вход в систему </h4>
+    <h6 id="welcome-heading" style="color:rgba(255, 0, 0, 0.242);">Only Staff !!!</h6>
+    
     <div id="auth-status"></div>
     <form id="login-form" style="max-width: 300px; margin: auto;">
         <div class="form-group">
@@ -22,46 +24,58 @@
             <input type="password" class="form-control" id="password" name="password" required>
         </div>
         <button type="button" class="btn btn-primary" onclick="login()">Войти</button>
+        
     </form>
+    <div id="result" class="mt-3"></div>
 </div>
 
-    <script>
-        const accessToken = localStorage.getItem("accessToken");
+<script>
+  function showLoginForm() {
+        loginForm.style.display = "block";
+        result.style.display = "none";
+    }
 
-        function updateAuthStatus() {
-            if (accessToken) {
-                document.getElementById("auth-status").innerText = "Authenticated";
-            } else {
-                document.getElementById("auth-status").innerText = "Not Authenticated";
-            }
-        }
-        updateAuthStatus();
-        function login() {
-            const username = document.getElementById("username").value;
-            const password = document.getElementById("password").value;
+    function showResult() {
+        loginForm.style.display = "none";
+        result.style.display = "block";
+    }
 
-            fetch('/api/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, password }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Store the access token in local storage
+    const authStatus = document.getElementById("auth-status");
+    const loginForm = document.getElementById("login-form");
+    const result = document.getElementById("result");
+    const accessToken = localStorage.getItem("accessToken");
+    console.log(accessToken)
+
+  
+
+    function login() {
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        fetch('/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, password }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.accessToken) {
+                authStatus.innerText = data.accessToken;
                 localStorage.setItem("accessToken", data.accessToken);
-                console.log(data.accessToken)
-                updateAuthStatus();
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-        }
-
-
-        
-    </script>
+                result.innerHTML = `<p> <a href="/callcenter.html">Портал КЦ</a></p>`;
+                showResult();
+            } else {
+                authStatus.innerText = "Введите корректные данные";
+                 localStorage.removeItem("accessToken");
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+</script>
 
 </body>
 </html>
@@ -70,16 +84,20 @@
 <style>
   /* Add your custom styles here if needed */
   #app {
-            background-color: #ffffff; /* Set a background color for the content area */
-            padding: 20px; /* Add padding to the content area */
-            border-radius: 10px; /* Add rounded corners to the content area */
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
-            margin-top: 50px; /* Add some top margin for spacing */
+            background-color: #ffffff; 
+            padding: 20px; 
+            border-radius: 10px; 
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 50px; 
+            overflow: hidden;
+
         }
 
-        #welcome-heading {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #007bff; /* Set text color */
-        }
+  #welcome-heading {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #007bff; /* Set text color */
+  }
+
+ 
 </style>

@@ -13,24 +13,22 @@ module.exports = {
       },
 
     async handler(ctx) {
-        // Логика отображения страницы загрузки
         const uploadPagePath = path.join(__dirname, "..", "public", "upload.html");
   
         try {
-          // Read the HTML file
           const uploadPageContent = await fs.readFile(uploadPagePath, "utf-8");
   
-          // Set the appropriate headers
+          
           ctx.meta.$responseHeaders = {
             "Content-Type": "text/html",
           };
   
-          // Return the HTML content
+  
           return uploadPageContent;
         } catch (error) {
           console.error("Error reading the upload page:", error);
-          // Handle the error and send an appropriate response
-          ctx.meta.$statusCode = 500; // Internal Server Error
+      
+          ctx.meta.$statusCode = 500; 
           return "Internal Server Error";
         }
       },
