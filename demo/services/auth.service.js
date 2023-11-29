@@ -16,7 +16,7 @@ module.exports = {
           user: "postgres",
           password: "aa346134aa",
           host: "localhost",
-          database: "practie",
+          database: "mortgage_project",
           port: 5432,
         },
     },
@@ -47,9 +47,10 @@ module.exports = {
                     return { error: "Invalid credentials" };
                   }
                   else{
+                    role = userexists.rolename
                    const accessToken = this.generateAccessToken(user);
                    
-                return { accessToken };}
+                return { accessToken, role};}
             },
         },
         logout: {
@@ -70,20 +71,21 @@ module.exports = {
     
 
       methods: {
-    async verifyUser(username, password) {
-      const client = await this.pool.connect();
-
-      try {
-        const result = await client.query(
-          "SELECT * FROM staff WHERE username = $1 AND password = $2",
-          [username, password]
-        );
-
-        return result.rows[0];
-      } finally {
-        client.release();
-    }
-  },
+        async verifyUser(username, password) {
+          const client = await this.pool.connect();
+      
+          try {
+              const result = await client.query(
+                  "SELECT roles.rolename FROM users JOIN user_roles ON users.id = user_roles.id_users JOIN roles ON user_roles.id_role = roles.id WHERE users.username = $1 AND users.password = $2",
+                  [username, password]
+              );
+      
+              return result.rows[0];
+          } finally {
+              client.release();
+          }
+      },
+      
         generateAccessToken(user) {
             return jwt.sign(user, this.settings.jwtSecret, { expiresIn: this.settings.jwtExpiresIn });
         },

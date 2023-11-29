@@ -8,7 +8,7 @@ const pool = new Pool({
   password: "aa346134aa",
   host: "localhost",
   port: 5432,
-  database: "practie",
+  database: "mortgage_project",
 });
 /*
 const vonage = new Vonage({
@@ -38,10 +38,10 @@ module.exports = {
 
         const link = `http://localhost:3000/api/upload?name=${ctx.params.name}&phoneNumber=${ctx.params.phoneNumber}`;
 
-        const result = await pool.query(
-          'INSERT INTO users (username, phonenumber) VALUES ($1, $2) RETURNING *',
-          [ctx.params.name, ctx.params.phoneNumber]
-        );
+       // const result = await pool.query(
+         // 'INSERT INTO orders (username, phonenumber) VALUES ($1, $2) RETURNING *',
+          //[ctx.params.name, ctx.params.phoneNumber]
+       //);
 
        // await ctx.call('sms.sendSMS', { to: ctx.params.phoneNumber, text: `Your link is ${link}` });
 
@@ -52,5 +52,23 @@ module.exports = {
       }
     },
   },
+
+  async getlistorders(ctx) {
+    try {
+
+      const result = await pool.query(`
+      SELECT id, name, phone_number, unique_link, order_status, lastname
+      FROM orders;
+      `);
+      console.log(result.rows)
+      return result.rows;
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      throw new Error('Internal Server Error');
+    }
+  
+  },
+
+
 },
 };

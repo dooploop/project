@@ -53,8 +53,11 @@ module.exports = {
 					'POST /generateLink': 'link.generateLink',
 					'GET /upload':'file.showUploadPage',
 					'POST /uploadfile': 'file.upload',
+					'POST /process': 'file.sendfile',
+
 					'POST /login': 'auth.login',
 					'POST /logout': 'auth.logout',
+					'GET /all_data': 'link.getlistorders',
          		
 				
 				},

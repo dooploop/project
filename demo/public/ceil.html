@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Data</title>
+  <!-- Подключение Bootstrap CSS -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Добавленные стили */
+    .container {
+      min-height: 100vh;
+    }
+
+    /* Задаем ширину колонок */
+    .col-table {
+      flex: 0 0 80%; /* 80% ширины для таблицы */
+    }
+
+    .col-form {
+      flex: 0 0 20%; /* 20% ширины для формы */
+      padding: 15px;
+      margin-left: 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container mt-5">
+  <div class="row">
+    <!-- Левая колонка с таблицей -->
+    <div class="col-md-8 col-table">
+      <h2>Список заявок</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th>Номер телефона</th>
+            <th>Ссылка</th>
+            <th>Статус заявки</th>
+          </tr>
+        </thead>
+        <tbody id="userDataBody"></tbody>
+      </table>
+    </div>
+
+    <!-- Правая колонка с формой -->
+    <div class="col-md-4 col-form">
+      <h2>Форма</h2>
+      <div class="form-group">
+        <label for="inputName">Имя:</label>
+        <input type="text" class="form-control" id="inputName" placeholder="Введите имя">
+      </div>
+      <div class="form-group">
+        <label for="inputPhoneNumber">Номер телефона:</label>
+        <input type="text" class="form-control" id="inputPhoneNumber" placeholder="Введите номер телефона">
+      </div>
+      <button type="button" class="btn btn-primary" onclick="submitForm()">Submit</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+async function submitForm() {
+    const name = document.getElementById('inputName').value;
+    const phonenumber = document.getElementById('inputPhoneNumber').value;
+
+    const response = await fetch('/api/process', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, phonenumber }),
+    });
+  }
+
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    fetch("/api/all_data")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            const userDataBody = document.getElementById("userDataBody");
+            userDataBody.innerHTML = '';
+
+            data.forEach(row => {
+                const newRow = document.createElement("tr");
+                newRow.innerHTML = `
+                    <td>${row.name}</td>
+                    <td>${row.lastname}</td>
+                    <td>${row.phone_number}</td>
+                    <td>${row.unique_link}</td>
+                    <td>${row.order_status}</td>
+                `;
+                userDataBody.appendChild(newRow);
+            });
+        })
+        .catch(error => {
+            console.error("Error loading data:", error);
+        });
+});
+</script>
+
+
