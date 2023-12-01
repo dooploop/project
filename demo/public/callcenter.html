@@ -104,10 +104,9 @@ if (!accessToken) {
             })
             .then(response => response.json())
             .then(data => {
-                // Clear the access token from local storage
                 localStorage.removeItem("accessToken");
 
-                // Redirect to the login page
+          
                 window.location.href = "/login.html";
             })
             .catch((error) => {
@@ -130,14 +129,15 @@ body {
             top: 0;
             left: 0;
             padding: 10px;
-            background-color: #8eb7ff; 
+            background-color: #002057; 
             color: #fff;
             border-radius: 1%;
             border: 1px solid rgb(209, 213, 255);
+
+            height: 50px;
         }
         #app {
             position: fixed;
-            top: 0;
             right: 0;
             padding: 10px;
         }

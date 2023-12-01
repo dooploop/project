@@ -57,7 +57,7 @@ module.exports = {
 
 					'POST /login': 'auth.login',
 					'POST /logout': 'auth.logout',
-					'GET /all_data': 'link.getlistorders',
+					'GET /all_data': 'ceil.getlistorders',
          		
 				
 				},

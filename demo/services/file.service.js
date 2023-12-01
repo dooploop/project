@@ -28,9 +28,11 @@ module.exports = {
           minioClient.fGetObject('docs', '8293249329Amir.docx', 'uploads/new.docx', function (err) {
             if (err) {
               return console.log(err)
+              
             }
             console.log('success')
           })
+          
         }
 },
 
@@ -80,17 +82,18 @@ module.exports = {
           console.log(ctx.params.file.name)
          // console.log(minioClient)
           const file = ctx.params.file;
-          const uploadDir = path.join(__dirname, "..", "uploads");
-          await fs.mkdir(uploadDir, { recursive: true });
-          const filePath = path.join(uploadDir, file.name);
-          await fs.writeFile(filePath, file.data, "base64");
+          console.log(file)
+        //  const uploadDir = path.join(__dirname, "..", "uploads");
+       //   await fs.mkdir(uploadDir, { recursive: true });
+         // const filePath = path.join(uploadDir, file.name);
+         // await fs.writeFile(filePath, file.data, "base64");
          const metaData = {
           'Content-Type': file.type,
         };
          const uploadStream = Buffer.from(file.data, 'base64');
         await minioClient.putObject('docs', file.name, uploadStream, file.data.length);
 
-        return { path: filePath};
+        return "good";
         } catch (error) {     
           throw new Error("File upload failed");
         }
