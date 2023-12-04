@@ -15,6 +15,13 @@
         <label for="fileInput" class="custom-file-label">Выбрать файл</label>
         <input type="file" id="fileInput" class="custom-file-input" accept=".pdf, .doc, .docx"/>
     </div>
+    <div class="select-container">
+        <select id="fileType" name="fileType" class="select-style">
+          <option value="паспорт">Паспорт</option>
+          <option value="справка">Справка</option>
+        </select>
+      </div>
+      
     
     <button onclick="uploadFile()" class="custom-upload-button">Отправить</button>
     <div id="result"> </div>
@@ -33,8 +40,12 @@
         async function uploadFile() {
             const fileInput = document.getElementById('fileInput');
             const file = fileInput.files[0];
+            const fileTypeSelect = document.getElementById('fileType');
+            const fileType = fileTypeSelect.value;
+
             const urlParams = new URLSearchParams(window.location.search);
-            const newname = urlParams.get('phoneNumber') +urlParams.get('name')+".docx";
+            const newname = urlParams.get('ident') + fileType + ".docx";
+           console.log(newname)
 
             if (file) {
                 const response = await fetch('/api/uploadfile', {
@@ -42,7 +53,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ file: { name: newname, data: await readFile(file) } }),
+                    body: JSON.stringify({ file: { name: newname, fileType: fileType, uuid : urlParams.get('ident') ,data: await readFile(file) } }),
                 });
 
                 const result = await response.json();
@@ -138,5 +149,51 @@ body {
 .greeting{
     margin: 20px;
 }
+/* Стили для контейнера селекта */
+.select-container {
+  position: relative;
+  margin: 10px;
+  background-color: #0b7dda;
+
+}
+
+/* Стили для самого селекта */
+.select-style {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding: 10px;
+  background-color: #0b7dda;
+
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* Стили для стрелочки справа в селекте */
+.select-style::after {
+  content: '▼'; /* Или другой символ */
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* Стили для опций внутри селекта */
+.select-style option {
+  padding: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Стили для выделенной опции */
+.select-style option:checked {
+  background-color: #f0f0f0;
+}
+
 
 </style>

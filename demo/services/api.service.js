@@ -54,10 +54,11 @@ module.exports = {
 					'GET /upload':'file.showUploadPage',
 					'POST /uploadfile': 'file.upload',
 					'POST /process': 'file.sendfile',
-
+					'POST /change_order_status': 'ceil.change_order_status',
 					'POST /login': 'auth.login',
 					'POST /logout': 'auth.logout',
 					'GET /all_data': 'ceil.getlistorders',
+					'POST /user_info_page': 'order.user_info_page',
          		
 				
 				},
