@@ -24,28 +24,49 @@ module.exports = {
       
       async getlistorders(ctx) {
         try {
-          const { name, phone_number } = ctx.params;
+          const { name, phone_number,currentPage } = ctx.params;
           console.log(ctx.params)
-          const query = `
-      SELECT orders.*, 
-        CASE 
-          WHEN order_status.status_name IS NULL THEN 'проверка' 
-          ELSE order_status.status_name 
-        END AS status
-      FROM orders
-      LEFT JOIN active_orders_status ON orders.id = active_orders_status.order_id
-      LEFT JOIN order_status ON active_orders_status.status_id = order_status.id
-      WHERE
-        (${name ? 'orders.name = $1' : 'TRUE'})
-            AND
-        (${phone_number ? 'orders.phone_number = $2' : 'TRUE'});
-    `;
+          const itemsPerPage = 10;
+          const offset = (currentPage - 1) * itemsPerPage;
+          
+          let query = `
+          SELECT orders.*, 
+            CASE 
+              WHEN order_status.status_name IS NULL THEN 'проверка' 
+              ELSE order_status.status_name 
+            END AS status
+          FROM orders
+          LEFT JOIN active_orders_status ON orders.id = active_orders_status.order_id
+          LEFT JOIN order_status ON active_orders_status.status_id = order_status.id
+          WHERE TRUE
+        `;
+        
+        const queryParams = [];
+        let paramCount = 1;
+        
+        if (name !== undefined) {
+          query += ` AND orders.name = $${paramCount}`;
+          queryParams.push(name);
+          paramCount++;
+        }
+        
+        if (phone_number !== undefined) {
+          query += ` AND orders.phone_number = $${paramCount}`;
+          queryParams.push(phone_number);
+          paramCount++;
+        }
+        
+        query += `
+          ORDER BY orders.id DESC
+          LIMIT $${paramCount}
+          OFFSET $${paramCount + 1};
+        `;
+        
+        queryParams.push(itemsPerPage, offset);
 
-    // Подготавливаем параметры для запроса
-    const queryParams = [name, phone_number].filter(param => param !== undefined);
-
+        
     // Выполняем запрос
-    const result = await pool.query(query, queryParams)
+        const result = await pool.query(query, queryParams)
       
           const orderStatusResult = await pool.query(`
             SELECT * FROM order_status;

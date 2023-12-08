@@ -40,9 +40,15 @@
         async function uploadFile() {
             const fileInput = document.getElementById('fileInput');
             const file = fileInput.files[0];
+            const origin_name = file.name
+            console.log(origin_name)
+            const maxLength = 250;
+
+            const truncatedName = truncateFileName(origin_name, maxLength);
+            console.log(truncatedName);
             const fileTypeSelect = document.getElementById('fileType');
             const fileType = fileTypeSelect.value;
-
+          
             const urlParams = new URLSearchParams(window.location.search);
             const newname = urlParams.get('ident') + fileType + ".docx";
            console.log(newname)
@@ -53,7 +59,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ file: { name: newname, fileType: fileType, uuid : urlParams.get('ident') ,data: await readFile(file) } }),
+                    body: JSON.stringify({ file: { origin_name :truncatedName, name: newname, fileType: fileType, uuid : urlParams.get('ident') ,data: await readFile(file) } }),
                 });
 
                 const result = await response.json();
@@ -83,6 +89,14 @@
                 reader.readAsDataURL(file);
             });
         }
+        function truncateFileName(fileName, maxLength) {
+            if (fileName.length <= maxLength) {
+                return fileName;
+            } else {
+                const truncatedName = fileName.substring(0, maxLength - 7) + '...' + fileName.slice(-4);
+                return truncatedName;
+            }
+            }
     </script>
 </body>
 </html>

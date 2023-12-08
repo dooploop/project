@@ -33,7 +33,6 @@
 
 </div>
 
-<!-- Modal HTML -->
 <div id="myModal" class="modal">
   <div class="modal-content">
     <span class="close" onclick="closeModal()">&times;</span>
@@ -58,7 +57,6 @@ document.addEventListener("DOMContentLoaded", function () {
     element.addEventListener('click', function () {
       // Get the data-id, name, lastname, and phone_number values
       const dataId = element.getAttribute('data-id');
-      // Display the modal with the information
       openModal(dataId);
     });
   });
@@ -67,12 +65,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const modal = document.getElementById('myModal');
   const modalContent = document.getElementById('modalContent');
 
-  // Set the content inside the modal
   modalContent.innerHTML = `
     <p>Data ID: 1}</p>
   `;
 console.log(dataId)
-  // Display the modal
   modal.style.display = 'block';
 }
 

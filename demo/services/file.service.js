@@ -42,6 +42,8 @@ module.exports = {
             throw new Error("File parameter is missing");
           }
           console.log(ctx.params.file.name)
+          console.log(ctx.params.file.origin_name)
+
           console.log(ctx.params.file.fileType)
           console.log(ctx.params.file.uuid)
 
@@ -58,8 +60,8 @@ module.exports = {
   //       const uploadStream = Buffer.from(file.data, 'base64');
         //  await minioClient.putObject('docs', file.name, uploadStream, file.data.length);
           const result = await pool.query(
-            `INSERT INTO files (file_name, file_Type) VALUES ($1, $2) RETURNING id`,
-            [ctx.params.file.name, ctx.params.file.fileType]
+            `INSERT INTO files (file_name, file_Type,origin_name) VALUES ($1, $2, $3) RETURNING id`,
+            [ctx.params.file.name, ctx.params.file.fileType,ctx.params.file.origin_name]
           );
          
           const combinedQuery = `

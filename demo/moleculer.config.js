@@ -24,9 +24,14 @@
  *      }
  *    }
  *  }
+ * 
+ * 
  *
  * @type {import('moleculer').BrokerOptions}
  */
+ require("@moleculer/lab");
+
+
 module.exports = {
 	// Namespace of nodes to segment your nodes on the same network.
 	namespace: "",
@@ -75,6 +80,8 @@ module.exports = {
 		  port: 5432,
 		},
 	  },
+	  // ...
+
 	
 	  // ... (другие настройки)
 	// Default log level for built-in console logger. It can be overwritten in logger options above.
@@ -180,6 +187,7 @@ module.exports = {
 	// Enable/disable built-in metrics function. More info: https://moleculer.services/docs/0.14/metrics.html
 	metrics: {
 		enabled: true,
+		reporter: "Laboratory",
 		// Available built-in reporters: "Console", "CSV", "Event", "Prometheus", "Datadog", "StatsD"
 		reporter: {
 			type: "Prometheus",
@@ -196,10 +204,17 @@ module.exports = {
 			}
 		}
 	},
+	logger: [{
+		type: "Console",
+		options: { /*...*/ }
+	}, "Laboratory"],    
 
 	// Enable built-in tracing function. More info: https://moleculer.services/docs/0.14/tracing.html
 	tracing: {
+
 		enabled: true,
+		exporter: "Laboratory",
+
 		// Available built-in exporters: "Console", "Datadog", "Event", "EventLegacy", "Jaeger", "Zipkin"
 		exporter: {
 			type: "Console", // Console exporter is only for development!

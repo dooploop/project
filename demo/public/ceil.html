@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>User Data</title>
-  <!-- Подключение Bootstrap CSS -->
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
 </head>
@@ -22,13 +21,12 @@
 <div class="container mt-5">
   
   <div class="row">
-    <!-- Левая колонка с таблицей -->
+ 
     <div class="col-md-8 col-table">
      
-
       <table class="table">
         <div class="">
-          <p>Список заявок </p>
+          <h5>Список заявок </h5>
         </div>
    
           <tr>
@@ -43,10 +41,21 @@
       
       
     </div>
+    
+    <div class="col-md-4 col-table">
+      <p>Быстрый поиск: </p>
+      <form id="filterForm">
+        <input type="text" id="filterName" name="filterName" class="form-control" placeholder="Имя">
+
+        <input type="text" id="filterPhoneNumber" name="filterPhoneNumber" class="form-control" placeholder="Номер телефона">
+
+        <button type="submit" class="btn btn-primary btn-block mt-3">Применить</button>
+      </form>
+    </div>
 
 </div>
-<
-
+<button id="prevButton" class="btn btn-danger" > < Пред</button>
+<button id="nextButton" class="btn btn-danger" >След > </button>
 <!-- Modal HTML -->
 <div id="myModal" class="modal">
   <div class="modal-content">
@@ -59,10 +68,6 @@
               <th>Фамилия </th>
               <th>Номер телефона</th>
               <th>Документы </th>
-
-
-
-              <!-- Add more headers as needed -->
             </tr>
           </thead>
           <tbody>
@@ -72,15 +77,7 @@
     </div>
   </div>
 </div>
-<form id="filterForm">
-  <label for="filterName">Name:</label>
-  <input type="text" id="filterName" name="filterName">
 
-  <label for="filterPhoneNumber">Phone Number:</label>
-  <input type="text" id="filterPhoneNumber" name="filterPhoneNumber">
-
-  <button type="submit">Apply Filters</button>
-</form>
 
 </body>
 </html>
@@ -96,9 +93,17 @@ if (!accessToken) {
     window.location.href = "/login.html";
 }
 document.addEventListener("DOMContentLoaded", function () {
+  currentPage = 1
   // Function to fetch data and populate the table
   function fetchDataAndPopulateTable() {
-    fetch("/api/all_data")
+    const page = currentPage;
+    console.log((currentPage))
+    const itemsPerPage = 10; 
+    if (currentPage) {
+    apiUrl = "/api/all_data"
+     apiUrl += `?currentPage=${currentPage}`;
+}
+    fetch(apiUrl)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -144,16 +149,18 @@ document.addEventListener("DOMContentLoaded", function () {
     const filterName = document.getElementById("filterName").value;
     const filterPhoneNumber = document.getElementById("filterPhoneNumber").value;
 
-    // Build the URL for the fetch request with optional query parameters
     let apiUrl = "/api/all_data";
-    if (filterName) {
-      apiUrl += `?name=${filterName}`;
-    }
-    if (filterPhoneNumber) {
-      apiUrl += `${filterName ? '&' : '?'}phone_number=${filterPhoneNumber}`;
-    }
-// Отправляем новый запрос с фильтрами через AJAX (fetch)
-// Отправляем новый запрос с фильтрами через AJAX (fetch)
+
+if (currentPage) {
+  apiUrl += `?currentPage=${currentPage}`;
+}
+if (filterName) {
+  apiUrl += `${currentPage ? '&' : '?'}name=${filterName}`;
+}
+if (filterPhoneNumber && filterName) {
+  apiUrl += `${filterName && currentPage ? '&' : '?'}phone_number=${filterPhoneNumber}`;
+}
+
 fetch(apiUrl)
   .then((response) => {
     if (!response.ok) {
@@ -162,15 +169,12 @@ fetch(apiUrl)
     return response.json();
   })
   .then((responseData) => {
-    // Выводим полученные данные в консоль для отладки
     console.log('Response Data:', responseData);
 
-    // Проверяем, что свойство orders существует и является массивом
     if (responseData && Array.isArray(responseData.orders)) {
       const userDataBody = document.getElementById("userDataBody");
-      userDataBody.innerHTML = ''; // Очищаем существующую таблицу
+      userDataBody.innerHTML = ''; 
 
-      // Заполняем таблицу данными из свойства orders
       responseData.orders.forEach((row) => {
         const newRow = document.createElement("tr");
         newRow.innerHTML = `
@@ -190,7 +194,6 @@ fetch(apiUrl)
         userDataBody.appendChild(newRow);
       });
     } else {
-      // Обрабатываем случай, когда свойство orders не существует или не является массивом
       console.error('Неверный формат данных. Ожидался объект с свойством orders, являющимся массивом.');
     }
   })
@@ -198,8 +201,22 @@ fetch(apiUrl)
     console.error("Ошибка при применении фильтров:", error);
   });
 });
+const nextButton = document.getElementById("nextButton");
+  nextButton.addEventListener("click", function () {
+    currentPage++;
+    fetchDataAndPopulateTable();
+  
+  });
 
-  // Initial data load on page load
+  const prevButton = document.getElementById("prevButton");
+  prevButton.addEventListener("click", function () {
+    if (currentPage > 1) {
+      currentPage--;
+      fetchDataAndPopulateTable();
+    }
+  });
+
+
   fetchDataAndPopulateTable();
 
 
@@ -221,20 +238,17 @@ fetch(apiUrl)
   tableBody.addEventListener('click', function (event) {
   const target = event.target;
   
-  // Check if the clicked element has the 'clickable' class
+ 
   if (target.classList.contains('clickable')) {
-    // Get the data-id, name, lastname, and phone_number values
     const dataId = target.getAttribute('data-id');
 
 
-    // Display the modal with the information
     openModal(dataId);
   }
 });
 function openModal(dataId) {
   console.log('Open modal called with dataId:', dataId);
 
-  // Send a POST request with the data-id
   const postData = {
     dataId: dataId
   };
@@ -248,7 +262,6 @@ function openModal(dataId) {
   })
     .then(response => response.json())
     .then(responseData => {
-      // Set the content inside the modal using the response data
       const tableRows = responseData.map(order => `
         <tr>
           <td>${order.name}</td>
@@ -266,17 +279,14 @@ function openModal(dataId) {
         </tr>
       `).join('');
 
-      // Get the modalContent element
+
       const modalContent = document.getElementById('modalContent');
 
-      // Update the content dynamically
       modalContent.querySelector('tbody').innerHTML = tableRows;
 
-      // Display the modal
       modal.style.display = 'block';
     })
     .catch(error => {
-      // Handle errors
       console.error('Error:', error);
     });
 }
@@ -284,7 +294,6 @@ function openModal(dataId) {
 const closeButton = document.querySelector('.close');
   const modal = document.getElementById('myModal');
 
-  // Add event listener to the close button
   closeButton.addEventListener('click', function () {
     closeModal();
   });
@@ -346,13 +355,13 @@ function logout() {
 
 <style>
 a {
-  color: #000000; /* Цвет текста */
-  text-decoration: none; /* Убираем подчеркивание */
-  font-weight: bold; /* Жирный текст */
+  color: #000000; 
+  text-decoration: none; 
+  font-weight: bold; 
 }
 
 a:hover {
-  color: #0056b3; /* Изменяем цвет текста при наведении */
+  color: #0056b3; 
 }
 
 .modal {
@@ -389,8 +398,6 @@ a:hover {
   text-decoration: none;
   cursor: pointer;
 }
-
-/* Additional Styles */
 body {
   font-family: Arial, sans-serif;
 }
@@ -399,133 +406,139 @@ body {
   min-height: 100vh;
 }
 
-/* Rest of your existing styles... */
 
 
 .container {
     min-height: 100vh;
   }
 
-  /* Задаем ширину колонок */
   .col-table {
-    flex: 0 0 80%; /* 80% ширины для таблицы */
+    flex: 0 0 80%; 
   }
 
   .col-form {
-    flex: 0 0 20%; /* 20% ширины для формы */
-    padding: 15px;
+    flex: 0 0 20%; 
     margin-left: 0;
+    margin-bottom: 10px;
   }
-
-
-      .table {
-        width: 100%;
-        margin-bottom: 20px;
-        
-        border-top: 5px solid #F2F8F8;
-        border-collapse: collapse; 
-        background: #fff;
-        box-shadow: 0 6px 14px hsla(0,0%,5%,.15);
-        box-sizing: border-box;
-        max-width: 760px;
-       
-      }
-      .table th {
-        font-weight: bold;
-        padding: 10px;
-        color: #fff;
-        background: #1d1e4a;
-        border: none;
-      }
-      .table td {
-        padding: 10px ;
-        font-size: 15px;
-        border: none;
-        border-bottom: 1px solid #1d1e4a;
-      }
+  .col-table table {
+  table-layout: fixed; 
+  height: 200px; 
+  overflow-y: auto; 
   
-      #app {
-          position:absolute;         
-          right: 10px;
-          color: #FFF; 
-          padding: 5px ; 
-          border: none; 
+}
+
+.table {
+
+  width: 100%;
+  margin-bottom: 20px;
+  
+  border-top: 5px solid #F2F8F8;
+  border-collapse: collapse; 
+  background: #fff;
+  box-shadow: 0 6px 14px hsla(0,0%,5%,.15);
+  box-sizing: border-box;
+  max-width: 760px;
+  
+}
+.table th {
+  font-weight: bold;
+  padding: 10px;
+  color: #fff;
+  background: #1d1e4a;
+  border: none;
+  height: 20px; 
+
+}
+.table td {
+  padding: 10px ;
+  font-size: 15px;
+  border: none;
+  border-bottom: 1px solid #1d1e4a;
+}
+
+#app {
+    position:absolute;         
+    right: 10px;
+    color: #FFF; 
+    padding: 5px ; 
+    border: none; 
+
+}
+
+#applogo {
+    position: fixed;
     
-      }
+    left: 0;
+    padding: 10px;
+    color: #fff;
+    font-weight: bold
 
-      #applogo {
-          position: fixed;
-         
-          left: 0;
-          padding: 10px;
-          color: #fff;
-          font-weight: bold
-      
-      }
-      
-      header {
-          width: 100vw; 
-          height: 80px; 
-          background-color: #1d1e4a;
-          display: flex;
-          display:flex ;
-          justify-content: space-between;
-          align-items: center; 
-          padding: 0 20px; 
-      }
-      .head_tab{
-        background-color: #ffffff;
-        border-top: 2px solid #1d1e4a;
-        color: rgb(0, 0, 0);
-        padding:3px;
-        text-align: center;
-        font-size: 20px;
-        font-weight: bold;
-      }
-      select {
-        background-color: #4ea8fc;
-        color: #FFF;
-        border: 1px solid #3e98ed;
-        padding: 5px;
-        border-radius: 3px;
-        font-weight: bold;
+}
 
-        
-      }
+header {
+    width: 100vw; 
+    height: 80px; 
+    background-color: #1d1e4a;
+    display: flex;
+    display:flex ;
+    justify-content: space-between;
+    align-items: center; 
+    padding: 0 20px; 
+}
+.head_tab{
+  background-color: #ffffff;
+  border-top: 2px solid #1d1e4a;
+  color: rgb(0, 0, 0);
+  padding:3px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+}
+select {
+  background-color: #4ea8fc;
+  color: #FFF;
+  border: 1px solid #3e98ed;
+  padding: 5px;
+  border-radius: 3px;
+  font-weight: bold;
 
-      option {
-        font-size: 14px;
-        font-weight: bold;
-        color: rgb(0, 0, 0);
-        border-bottom:1px solid #fff ;
-        background-color: #F2F8F8;
+  
+}
 
-      }
-      .btn_change{
-        padding: 5px;
-        left: 0;
-        background-color:#3e98ed;
-        color: rgb(255, 255, 255);
-        border-radius: 3px;
-        width: 100%;
-        font-size: 14px;
-        font-weight: bold;
-      }
-      button{
-        border: #fff;
-        padding: 0;
-        margin: 0;
-      }
-      .btn_getdoc{
-       
-        font-size: 15px;
-      }
-      img{
-        height: 35px;
-        width: 45px;
-        background-color: #FFF;
-        border: 0;
-      }
+option {
+  font-size: 14px;
+  font-weight: bold;
+  color: rgb(0, 0, 0);
+  border-bottom:1px solid #fff ;
+  background-color: #F2F8F8;
+
+}
+.btn_change{
+  padding: 5px;
+  left: 0;
+  background-color:#3e98ed;
+  color: rgb(255, 255, 255);
+  border-radius: 3px;
+  width: 100%;
+  font-size: 14px;
+  font-weight: bold;
+}
+button{
+  border: #fff;
+  padding: 0;
+  margin: 0;
+}
+.btn_getdoc{
+  
+  font-size: 15px;
+}
+img{
+  height: 35px;
+  width: 45px;
+  background-color: #FFF;
+  border: 0;
+}
 
 
 
