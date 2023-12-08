@@ -2,8 +2,7 @@ const { ServiceBroker } = require("moleculer");
 const LinkService = require("../../../services/link.service");
 
 describe("Test link service", () => {
-  let broker;
-
+    let broker;
     broker = new ServiceBroker({ logger: false });
     broker.createService(LinkService);
 
