@@ -1,1 +1,57 @@
-с
+@startuml Diagram1
+actor ЛИД
+database БД
+database MinIO
+participant Коллцентр
+participant СтраницаЗагрузки
+participant СМССервис
+participant UploadСервис
+
+ЛИД -> Коллцентр: Заявка,
+activate Коллцентр
+Коллцентр -> БД: Добавить данные ЛИДа
+activate БД
+БД --> Коллцентр: Данные добавлены
+deactivate БД
+Коллцентр -> СМССервис: Отправить ссылку
+activate СМССервис
+СМССервис --> ЛИД: Сообщение с ссылкой
+deactivate СМССервис
+deactivate Коллцентр
+
+ЛИД -> СтраницаЗагрузки: Переход
+activate СтраницаЗагрузки
+СтраницаЗагрузки -> UploadСервис: Загрузить документы
+activate UploadСервис
+UploadСервис --> БД: Добавить документы
+БД --> MinIO: Сохранить документы
+deactivate UploadСервис
+deactivate БД
+deactivate СтраницаЗагрузки
+@enduml
+
+
+@startuml Diagram2
+actor Сейл
+database БД
+database MinIO
+
+Сейл -> БД: Получить данные из БД
+activate Сейл
+БД --> Сейл: Данные ЛИДов
+
+alt Документы в MinIO?
+  Сейл -> MinIO: Получить документы из MinIO
+  activate MinIO
+  MinIO --> Сейл: Документы
+  deactivate MinIO
+ 
+  Сейл --> БД: Решение по заявке 
+else
+  Сейл --> Сейл: "Документ отсутствует"
+
+  Сейл --> БД: Отказ!
+end
+
+deactivate Сейл
+@enduml
