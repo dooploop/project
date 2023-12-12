@@ -50,7 +50,7 @@ services:
       - data:/data/db
     networks:
       - internal
-
+  
   nats:
     image: nats:2
     networks:
@@ -70,6 +70,73 @@ services:
     networks:
       - internal
       - default
+  link:
+    build:
+      context: .
+    image: demo
+    env_file: docker-compose.env
+    networks:
+      - internal
+
+  sms:
+    build:
+      context: .
+    image: demo
+    env_file: docker-compose.env
+    networks:
+      - internal
+
+  auth:
+    build:
+      context: .
+    image: demo
+    env_file: docker-compose.env
+    networks:
+      - internal
+
+  docs:
+    build:
+      context: .
+    image: demo
+    env_file: docker-compose.env
+    networks:
+      - internal
+    depends_on:
+      - nats
+      - mongo
+
+  file:
+    build:
+      context: .
+    image: demo
+    env_file: docker-compose.env
+    networks:
+      - internal
+    depends_on:
+      - nats
+      - mongo
+
+  order:
+    build:
+      context: .
+    image: demo
+    env_file: docker-compose.env
+    networks:
+      - internal
+    depends_on:
+      - nats
+      - mongo
+
+  ceil:
+    build:
+      context: .
+    image: demo
+    env_file: docker-compose.env
+    networks:
+      - internal
+    depends_on:
+      - nats
+      - mongo
 
 networks:
   internal:

@@ -76,7 +76,7 @@ module.exports = {
       
           try {
               const result = await client.query(
-                  "SELECT roles.rolename FROM users JOIN user_roles ON users.id = user_roles.id_users JOIN roles ON user_roles.id_role = roles.id WHERE users.username = $1 AND users.password = $2",
+                  "SELECT roles.rolename FROM users JOIN user_roles ON users.id = user_roles.user_id JOIN roles ON user_roles.role_id = roles.id WHERE users.username = $1 AND users.password = $2",
                   [username, password]
               );
       

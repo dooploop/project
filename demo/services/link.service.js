@@ -36,7 +36,7 @@ module.exports = {
           throw new Error("Name or Phone Number parameters are missing");
         }
 
-
+        console.log(ctx.params.phoneNumber)
         const result = await pool.query(
           'INSERT INTO orders (name, phone_number,lastname) VALUES ($1, $2,$3) RETURNING *',
           [ctx.params.name, ctx.params.phoneNumber,ctx.params.lastname ]
