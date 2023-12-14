@@ -12,8 +12,7 @@ describe("Test link service", () => {
       it("should generate a link", async () => {
         const name = "Name";
         const phoneNumber = "123456789";
-        const lastname = "SName";
-
+        const lastname = "LastName";
         const response = await broker.call("link.generateLink", {
           name,
           phoneNumber,
@@ -21,7 +20,7 @@ describe("Test link service", () => {
         });
 
         expect(response).toBeDefined();
-        expect(response.link).toMatch(/http:\/\/localhost:3000\/api\/upload\?ident=uuid/);
+        expect(response.link).toMatch(/http:\/\/localhost:3000\/api\/upload\?ident=${response.myUUID}`/);
       });
 
       it("should handle missing parameters", async () => {

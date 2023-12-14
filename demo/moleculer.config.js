@@ -68,17 +68,21 @@ module.exports = {
 		// ...
 		
 	],
+	
 	middlewares: [
 		
 	  ],
 	  settings: {
-		postgres: {
-		  user: "portgres",
-		  password: "aa346134aa",
-		  host: "localhost:3000",
-		  database: "practie",
-		  port: 5432,
-		},
+		
+	  },
+	  db: {
+		type: 'postgres',
+		host: 'db', 
+		port: 5432,
+		database: 'mortgage_project',
+		username: 'postgres',
+		password: 'aa346134aa',
+		options: {},
 	  },
 	  // ...
 

@@ -13,11 +13,11 @@ module.exports = {
         jwtSecret: "woneit", 
         jwtExpiresIn: "1m", 
         postgres: {
+          host: "db",
           user: "postgres",
           password: "aa346134aa",
-          host: "localhost",
           database: "mortgage_project",
-          port: 5432,
+          port:5432,
         },
     },
     async started() {

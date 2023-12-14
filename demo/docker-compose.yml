@@ -50,7 +50,14 @@ services:
       - data:/data/db
     networks:
       - internal
-  
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: 'mortgage_project'
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'aa346134aa'
+    ports:
+      - '5432:5432'
   nats:
     image: nats:2
     networks:
@@ -74,7 +81,11 @@ services:
     build:
       context: .
     image: demo
+    environment:
+      SERVICES: link
     env_file: docker-compose.env
+    depends_on:
+      - db
     networks:
       - internal
 
@@ -83,6 +94,8 @@ services:
       context: .
     image: demo
     env_file: docker-compose.env
+    depends_on:
+      - db
     networks:
       - internal
 
@@ -90,7 +103,11 @@ services:
     build:
       context: .
     image: demo
+    environment:
+      SERVICES: auth
     env_file: docker-compose.env
+    depends_on:
+      - db
     networks:
       - internal
 
@@ -99,44 +116,43 @@ services:
       context: .
     image: demo
     env_file: docker-compose.env
+    depends_on:
+      - db
     networks:
       - internal
-    depends_on:
-      - nats
-      - mongo
+
 
   file:
     build:
       context: .
     image: demo
     env_file: docker-compose.env
+    depends_on:
+      - db
     networks:
       - internal
-    depends_on:
-      - nats
-      - mongo
+
 
   order:
     build:
       context: .
     image: demo
     env_file: docker-compose.env
+    depends_on:
+      - db
     networks:
       - internal
-    depends_on:
-      - nats
-      - mongo
 
   ceil:
     build:
       context: .
     image: demo
     env_file: docker-compose.env
+    depends_on:
+      - db
     networks:
       - internal
-    depends_on:
-      - nats
-      - mongo
+
 
 networks:
   internal:

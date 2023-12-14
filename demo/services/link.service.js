@@ -7,7 +7,7 @@ const uuid = require('uuid').v4
 const pool = new Pool({
   user: "postgres",
   password: "aa346134aa",
-  host: "localhost",
+  host: "db",
   port: 5432,
   database: "mortgage_project",
 });
@@ -44,17 +44,13 @@ module.exports = {
        const myUUID = result.rows[0].uuid
        const link = `http://localhost:3000/api/upload?ident=${myUUID}` 
        // await ctx.call('sms.sendSMS', { to: ctx.params.phoneNumber, text: `Your link is ${link}` });
-
-        return  { link };
+        return  { link,myUUID };
       } catch (error) {
         console.error(error);
         throw new Error("Link generation, database save, or SMS sending failed");
       }
     },
   },
-
-
-
 
 },
 };
